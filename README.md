@@ -36,10 +36,6 @@ your_data_directory/
     └── ...
 ```
 
-> **Note:** Kaggle may extract images into nested folders (e.g., `train_images/train_images/`). Make sure your path points to the directory that directly contains the `.jpg` files.
-
----
-
 ## Model 1: KNN (Non-Neural-Network)
 
 ### Overview
@@ -48,10 +44,6 @@ K-Nearest Neighbors with PCA-reduced raw pixel features. Exhaustive grid search 
 
 **Best configuration:** PCA components = 200, k = 20, metric = cosine, weights = distance  
 **Validation accuracy:** 41.56%
-
-### Environment
-
-Runs on CPU (no GPU required). Tested on Python 3.11, Windows.
 
 ### Dependencies
 
@@ -76,11 +68,11 @@ pip install numpy pandas matplotlib seaborn scikit-learn pillow
    | Cell | Step | Time Estimate |
    |------|------|---------------|
    | 1 | Imports and config | Instant |
-   | 2 | Load images, encode labels, 80/20 stratified split | ~30s |
-   | 3 | StandardScaler + PCA (300 components, whitened) | ~20s |
-   | 4 | Grid search: 9 PCA dims × 6 k-values × 4 metrics = 216 configs, each with 3-fold CV | ~15–30 min |
-   | 5 | Visualization: PCA variance plot + grid search heatmaps | Instant |
-   | 6 | Refit best model, predict test set, save submission CSV | ~1 min |
+   | 2 | Load images, encode labels, 80/20 stratified split
+   | 3 | StandardScaler + PCA (300 components, whitened)
+   | 4 | Grid search: 9 PCA dims × 6 k-values × 4 metrics = 216 configs, each with 3-fold CV 
+   | 5 | Visualization: PCA variance plot + grid search heatmaps
+   | 6 | Refit best model, predict test set, save submission CSV 
 
 4. The submission CSV is saved to `SUBMISSION_PATH` with a timestamped filename:
    ```
@@ -101,28 +93,19 @@ pip install numpy pandas matplotlib seaborn scikit-learn pillow
 
 ---
 
-## Model 2: ResNet50 (Neural Network, Trained from Scratch)
+## Model 2: ResNet50 (This is the best performing model)
 
 ### Overview
 
-ResNet50 architecture with no pretrained weights, trained with SAM optimizer, aggressive data augmentation including RandAugment, MixUp, CutMix, and RandomErasing, cosine annealing warm restarts, and test-time augmentation (10 views).
+ResNet50 architecture with no pretrained weights, trained with SAM optimizer, data augmentation including RandAugment, MixUp, CutMix, and RandomErasing, cosine annealing warm restarts, and test-time augmentation (10 views).
 
 **Best validation accuracy:** 94.28% (epoch ~140)  
 **Kaggle score:** 97.8% public / 97.6% private
 
-### Environment
-
-**Requires a CUDA-capable GPU.** Training takes approximately 80 minutes for 160 epochs on A100, but timing varies depending on the GPU quality. 
 
 ### Dependencies
 
-Google Colab comes with all dependencies pre-installed. If running locally:
-
-```bash
-pip install torch torchvision numpy pandas matplotlib seaborn scikit-learn pillow tqdm
-```
-
-PyTorch must be installed with CUDA support. See [pytorch.org](https://pytorch.org/get-started/locally/) for installation instructions matching your CUDA version.
+Google Colab comes with all dependencies pre-installed. If running locally, they are all listed in the first cell. 
 
 ### How to Run
 
@@ -136,11 +119,7 @@ PyTorch must be installed with CUDA support. See [pytorch.org](https://pytorch.o
    └── test_images/
    ```
 
-2. Open `ResNet50_97_2_.ipynb` in Google Colab.
-
-3. Enable GPU: **Runtime → Change runtime type → T4/A100 GPU**.
-
-4. Run all cells in order. The notebook will:
+2. Run all cells in order. The notebook will:
    - Mount Google Drive and set paths
    - Copy data to Colab local storage for faster I/O 
    - Compute dataset channel means and standard deviations 
