@@ -178,40 +178,4 @@ PyTorch must be installed with CUDA support. See [pytorch.org](https://pytorch.o
 | Gradient clip | 1.0 | Max gradient norm |
 | TTA views | 10 | 1 center + 1 flipped + 8 random crops |
 
-### Reproducing with a Saved Checkpoint
 
-If you have the saved `best_model.pth` checkpoint and want to skip training:
-
-1. Place `best_model.pth` in your working directory.
-2. Run all cells up to and including the model definition cells (Cells 1–15).
-3. Skip the training cell (Cell 17).
-4. Run the inference cell (Cell 21), which loads `best_model.pth` and runs TTA prediction.
-
----
-
-## Submission Format
-
-Both notebooks output a CSV in the Kaggle-required format:
-
-```csv
-ID,TARGET
-test_000001,MONARCH
-test_000002,BLUE MORPHO
-test_000003,ATLAS MOTH
-...
-```
-
-- **ID**: Image filename without the `.jpg` extension
-- **TARGET**: Predicted species name string
-
----
-
-## Troubleshooting
-
-| Issue | Solution |
-|-------|----------|
-| `FileNotFoundError` on image paths | Check for nested folders (e.g., `train_images/train_images/`). Point paths to the directory containing `.jpg` files directly. |
-| KNN grid search is very slow | Reduce `n_components_grid` to `[50, 100, 200]` or `n_neighbors_grid` to `[5, 10, 20]` for a faster sweep. |
-| CUDA out of memory (ResNet50) | Reduce `BATCH_SIZE` from 64 to 32 or 16. If using T4 instead of A100, 32 is recommended. |
-| `NaN` loss during ResNet50 training | The notebook has a built-in NaN guard that skips bad batches. If it occurs frequently, reduce the learning rate or SAM ρ. |
-| Mixed-case label (`Iphiclus sister`) | This is expected. The LabelEncoder handles it correctly. Do not manually uppercase it. |
